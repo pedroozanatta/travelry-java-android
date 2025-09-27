@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="continentes">
+        <item>@string/america_do_sul</item>
+        <item>@string/america_do_norte</item>
+        <item>@string/europa</item>
+        <item>@string/africa</item>
+        <item>@string/asia</item>
+        <item>@string/oceania</item>
+    </string-array>
+
+    <string-array name="viagem_pais">
+        <item>Espanha</item>
+        <item>Brasil</item>
+        <item>Rússia</item>
+        <item>Australia</item>
+        <item>Canadá</item>
+        <item>Brasil</item>
+        <item>Japão</item>
+        <item>Egito</item>
+        <item>Chile</item>
+        <item>Portugal</item>
+    </string-array>
+
+    <string-array name="viagem_locais">
+        <item>Madrid</item>
+        <item>Rio de Janeiro</item>
+        <item>Moscou</item>
+        <item>Sydney</item>
+        <item>Montreal</item>
+        <item>São Paulo</item>
+        <item>Tóquio</item>
+        <item>Cairo</item>
+        <item>Santiago</item>
+        <item>Porto</item>
+    </string-array>
+    
+    <string-array name="viagem_data">
+        <item>10-Jan-2023</item>
+        <item>9-Aug-2024</item>
+        <item>21-Jul-2018</item>
+        <item>16-Feb-2019</item>
+        <item>17-Jun-2025</item>
+        <item>06-Jun-2018</item>
+        <item>2-Jan-2022</item>
+        <item>5-Mar-2023</item>
+        <item>7-Oct-2017</item>
+        <item>27-May-2021</item>
+    </string-array>
+    
+    <integer-array name="viagem_capital">
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+    </integer-array>
+
+    <integer-array name="viagem_tipo">
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+    </integer-array>
+
+    <integer-array name="viagem_continente">
+        <item>2</item>
+        <item>0</item>
+        <item>2</item>
+        <item>5</item>
+        <item>1</item>
+        <item>0</item>
+        <item>4</item>
+        <item>3</item>
+        <item>0</item>
+        <item>2</item>
+    </integer-array>
+</resources>

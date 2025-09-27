@@ -1,0 +1,11 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.ThemeStylesIcons" parent="Theme.Material3.Light">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/blue_primary_color</item>
+        <item name="colorPrimaryVariant">@color/blue_variant</item>
+        <item name="colorOnPrimary">@color/neutral_white</item>
+
+        <item name="android:textColorLink">@color/blue_primary_color</item>
+    </style>
+</resources>
