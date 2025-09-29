@@ -13,10 +13,13 @@
         android:theme="@style/Theme.ThemeStylesIcons">
         <activity
             android:name=".SobreActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".ListaActivity"
+            />
         <activity
             android:name=".ListaActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +28,9 @@
         </activity>
         <activity
             android:name=".ViagemActivity"
-            android:exported="false"></activity>
+            android:exported="false"
+            android:parentActivityName=".ListaActivity">
+        </activity>
     </application>
 
 </manifest>

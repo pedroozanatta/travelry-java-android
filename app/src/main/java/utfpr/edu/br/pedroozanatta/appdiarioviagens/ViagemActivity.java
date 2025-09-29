@@ -3,15 +3,20 @@ package utfpr.edu.br.pedroozanatta.appdiarioviagens;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
@@ -26,17 +31,22 @@ public class ViagemActivity extends AppCompatActivity {
     public static final String KEY_CAPITAL = "KEY_CAPITAL";
     public static final String KEY_TIPO = "KEY_TIPO";
     public static final String KEY_CONTINENTE = "KEY_CONTINENTE";
+    public static final String KEY_MODO = "MODO";
+
+    public static final int MODO_NOVO = 0;
+    public static final int MODO_EDITAR = 1;
     private EditText editTextPais, editTextLocal, editTextData;
     private CheckBox checkBoxCapital;
     private RadioGroup radioGroupTipo;
     private Spinner spinnerContinente;
+    private RadioButton radioButtonNacional, radioButtonInternacional;
+    private int modo;
+    private Viagem viagemOriginal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viagem);
-
-        setTitle(getString(R.string.cadastro_de_viagens));
 
         editTextPais = findViewById(R.id.editTextPais);
         editTextLocal = findViewById(R.id.editTextLocal);
@@ -44,9 +54,48 @@ public class ViagemActivity extends AppCompatActivity {
         checkBoxCapital = findViewById(R.id.checkBoxCapital);
         radioGroupTipo = findViewById(R.id.radioGroupTipo);
         spinnerContinente = findViewById(R.id.spinnerContinente);
+        radioButtonNacional = findViewById(R.id.radioButtonNacional);
+        radioButtonInternacional = findViewById(R.id.radioButtonInternacional);
+
+        Intent intentAbretura = getIntent();
+
+        Bundle bundle  = intentAbretura.getExtras();
+
+        if(bundle!=null){
+            modo = bundle.getInt(KEY_MODO);
+
+            if(modo == MODO_NOVO){
+                setTitle(getString(R.string.cadastro_de_viagens));
+            } else {
+                setTitle(getString(R.string.editar_viagem));
+
+                String pais = bundle.getString(ViagemActivity.KEY_PAIS);
+                String local = bundle.getString(ViagemActivity.KEY_LOCAL);
+                String data = bundle.getString(ViagemActivity.KEY_DATA);
+                boolean capital = bundle.getBoolean(ViagemActivity.KEY_CAPITAL);
+                String tipo = bundle.getString(ViagemActivity.KEY_TIPO);
+                int continente = bundle.getInt(ViagemActivity.KEY_CONTINENTE);
+
+                TipoViagem tipoViagem = TipoViagem.valueOf(tipo);
+
+                viagemOriginal = new Viagem(pais, local, data, capital, tipoViagem, continente);
+
+                editTextPais.setText(pais);
+                editTextLocal.setText(local);
+                editTextData.setText(data);
+                checkBoxCapital.setChecked(capital);
+                spinnerContinente.setSelection(continente);
+
+                if(tipoViagem == TipoViagem.Nacional){
+                    radioButtonNacional.setChecked(true);
+                } else if(tipoViagem == TipoViagem.Internacional){
+                    radioButtonInternacional.setChecked(true);
+                }
+            }
+        }
     }
 
-    public void limparInputs(View view) {
+    public void limparInputs() {
         editTextPais.setText(null);
         editTextLocal.setText(null);
         editTextData.setText(null);
@@ -61,7 +110,7 @@ public class ViagemActivity extends AppCompatActivity {
                        Toast.LENGTH_LONG).show();
     }
 
-    public void salvarDados(View view) {
+    public void salvarDados() {
 
         String pais = editTextPais.getText().toString();
         String local = editTextLocal.getText().toString();
@@ -121,6 +170,19 @@ public class ViagemActivity extends AppCompatActivity {
 
         boolean capital = checkBoxCapital.isChecked();
 
+        if(modo == MODO_EDITAR &&
+           pais.equalsIgnoreCase(viagemOriginal.getPais()) &&
+           local == viagemOriginal.getLocal() &&
+           data == viagemOriginal.getData() &&
+           capital == viagemOriginal.isCapital() &&
+           radioButtonSelecionado == viagemOriginal.getTipoViagem() &&
+           continente == viagemOriginal.getContinente()){
+
+            setResult(ViagemActivity.RESULT_CANCELED);
+            finish();
+            return;
+        }
+
         Intent intentResposta = new Intent();
 
         intentResposta.putExtra(KEY_PAIS, pais);
@@ -155,5 +217,27 @@ public class ViagemActivity extends AppCompatActivity {
                 }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH), calendario.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.viagem_opcoes, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int idMenuItem = item.getItemId();
+
+        if(idMenuItem == R.id.menuItemSalvar){
+            salvarDados();
+            return true;
+        } else if(idMenuItem == R.id.menuItemLimpar){
+            limparInputs();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 }

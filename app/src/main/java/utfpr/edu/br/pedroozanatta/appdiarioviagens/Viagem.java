@@ -1,6 +1,16 @@
 package utfpr.edu.br.pedroozanatta.appdiarioviagens;
 
+import java.util.Comparator;
+
 public class Viagem {
+
+
+    public static Comparator<Viagem> ordenacao = new Comparator<Viagem>() {
+        @Override
+        public int compare(Viagem viagem1, Viagem viagem2) {
+            return viagem1.getPais().compareToIgnoreCase(viagem2.getPais());
+        }
+    };
 
     private String pais;
     private String local;

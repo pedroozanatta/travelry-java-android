@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/blue_primary_color</item>
         <item name="colorPrimaryVariant">@color/blue_variant</item>
         <item name="colorOnPrimary">@color/neutral_white</item>
-
         <item name="android:textColorLink">@color/links</item>
+        <item name="android:textColorPrimary">@color/neutral_white</item>
     </style>
 </resources>

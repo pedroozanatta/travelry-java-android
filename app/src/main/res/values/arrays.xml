@@ -2,11 +2,11 @@
 <resources>
 
     <string-array name="continentes">
-        <item>@string/america_do_sul</item>
-        <item>@string/america_do_norte</item>
-        <item>@string/europa</item>
         <item>@string/africa</item>
+        <item>@string/america_do_norte</item>
+        <item>@string/america_do_sul</item>
         <item>@string/asia</item>
+        <item>@string/europa</item>
         <item>@string/oceania</item>
     </string-array>
 

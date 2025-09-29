@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StartActivityResultLaucher</string>
+    <string name="app_name">OptionsMenu</string>
     <string name="pais_label">País: </string>
     <string name="label_data">Data: </string>
     <string name="btnLimpar">Limpar</string>
@@ -46,4 +46,7 @@
     <string name="nenhum_aplicativo_para_abrir_paginas_web">Nenhum aplicativo para abrir páginas web</string>
     <string name="nenhum_aplicativo_para_enviar_email">Nenhum aplicativo para enviar email</string>
     <string name="contato_pelo_aplicativo">Contato pelo aplicativo</string>
+    <string name="editar">Editar</string>
+    <string name="excluir">Excluir</string>
+    <string name="editar_viagem">Editar viagem</string>
 </resources>
