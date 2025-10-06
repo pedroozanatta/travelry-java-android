@@ -1,11 +1,11 @@
 package utfpr.edu.br.pedroozanatta.appdiarioviagens;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,6 +36,12 @@ public class ListaActivity extends AppCompatActivity {
     private ActionMode actionMode;
     private View viewSelecionada;
     private Drawable backgroundDrawable;
+    public static final String ARQUIVO_PREFERENCIAS = "utfpr.edu.br.pedroozanatta.appdiarioviagens.PREFERENCIAS";
+    public static final String KEY_ORDENACAO_ASCENDENTE = "ORDENACAO_ASCENDENTE";
+
+    public static final boolean PADRAO_INICIAL_ORDENACAO_ASCENDENTE = true;
+    private boolean ordenacaoAscendente = PADRAO_INICIAL_ORDENACAO_ASCENDENTE;
+    private MenuItem menuItemOrdenacao;
     private ActionMode.Callback actionCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -53,15 +59,15 @@ public class ListaActivity extends AppCompatActivity {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             int idMenuItem = item.getItemId();
 
-            if(idMenuItem == R.id.menuItemEditar) {
+            if (idMenuItem == R.id.menuItemEditar) {
                 editarViagem();
                 return true;
             } else {
-                if(idMenuItem == R.id.menuItemExcluir){
+                if (idMenuItem == R.id.menuItemExcluir) {
                     excluirViagem();
                     mode.finish();
                     return true;
-                } else{
+                } else {
                     return false;
                 }
             }
@@ -70,7 +76,7 @@ public class ListaActivity extends AppCompatActivity {
         @Override
         public void onDestroyActionMode(ActionMode mode) {
 
-            if (viewSelecionada != null){
+            if (viewSelecionada != null) {
                 viewSelecionada.setBackground(backgroundDrawable);
             }
 
@@ -91,10 +97,12 @@ public class ListaActivity extends AppCompatActivity {
 
         listViewViagens = findViewById(R.id.listViewViagens);
 
+        lerPreferencias();
+
         popularListaViagens();
     }
 
-    public void popularListaViagens(){
+    public void popularListaViagens() {
         listaViagens = new ArrayList<>();
         viagemAdapter = new ViagemAdapter(listaViagens, this);
 
@@ -132,7 +140,7 @@ public class ListaActivity extends AppCompatActivity {
         listViewViagens.setAdapter(viagemAdapter);
     }
 
-    public void abrirSobre(){
+    public void abrirSobre() {
         Intent intentAbertura = new Intent(this, SobreActivity.class);
         startActivity(intentAbertura);
     }
@@ -140,13 +148,13 @@ public class ListaActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> laucherNovaViagem = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
-            if(result.getResultCode() == ListaActivity.RESULT_OK){
+            if (result.getResultCode() == ListaActivity.RESULT_OK) {
 
                 Intent intent = result.getData();
 
                 Bundle bundle = intent.getExtras();
 
-                if(bundle != null){
+                if (bundle != null) {
 
                     String pais = bundle.getString(ViagemActivity.KEY_PAIS);
                     String local = bundle.getString(ViagemActivity.KEY_LOCAL);
@@ -158,15 +166,13 @@ public class ListaActivity extends AppCompatActivity {
                     Viagem viagem = new Viagem(pais, local, data, capital, TipoViagem.valueOf(tipo), continente);
                     listaViagens.add(viagem);
 
-                    Collections.sort(listaViagens, Viagem.ordenacao);
-
-                    viagemAdapter.notifyDataSetChanged();
+                    ordenarLista();
                 }
             }
         }
     });
 
-    public void abrirCadastroViagem(){
+    public void abrirCadastroViagem() {
         Intent intentAbertura = new Intent(this, ViagemActivity.class);
         intentAbertura.putExtra(ViagemActivity.KEY_MODO, ViagemActivity.MODO_NOVO);
         laucherNovaViagem.launch(intentAbertura);
@@ -175,6 +181,8 @@ public class ListaActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.viagens_opcoes, menu);
+
+        menuItemOrdenacao = menu.findItem(R.id.menuItemOrdenacao);
         return true;
     }
 
@@ -183,20 +191,39 @@ public class ListaActivity extends AppCompatActivity {
 
         int idMenuItem = item.getItemId();
 
-        if(idMenuItem == R.id.menuItemAdicionar) {
+        if (idMenuItem == R.id.menuItemAdicionar) {
             abrirCadastroViagem();
             return true;
-        } else{
-            if(idMenuItem == R.id.menuItemSobre){
-                abrirSobre();
-                return true;
-            } else{
-                return super.onOptionsItemSelected(item);
-            }
+        } else if (idMenuItem == R.id.menuItemSobre) {
+            abrirSobre();
+            return true;
+        } else if (idMenuItem == R.id.menuItemOrdenacao) {
+            salvarPreferenciaOrdenacao(!ordenacaoAscendente);
+            atualizarIconeOrdenacao();
+            ordenarLista();
+            return true;
+        } else if(idMenuItem == R.id.menuItemRestaurar){
+            restaurarPadroes();
+            atualizarIconeOrdenacao();
+            ordenarLista();
+
+            Toast.makeText(this,
+                          getString(R.string.as_configuracoes_voltaram_para_o_padrao_de_instalacao),
+                          Toast.LENGTH_LONG).show();
+            return true;
+
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
-    private void excluirViagem(){
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        atualizarIconeOrdenacao();
+        return true;
+    }
+
+    private void excluirViagem() {
         listaViagens.remove(posicaoSelecionada);
         viagemAdapter.notifyDataSetChanged();
     }
@@ -204,13 +231,13 @@ public class ListaActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> laucherEditarViagem = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
-            if(result.getResultCode() == ListaActivity.RESULT_OK){
+            if (result.getResultCode() == ListaActivity.RESULT_OK) {
 
                 Intent intent = result.getData();
 
                 Bundle bundle = intent.getExtras();
 
-                if(bundle != null){
+                if (bundle != null) {
 
                     String pais = bundle.getString(ViagemActivity.KEY_PAIS);
                     String local = bundle.getString(ViagemActivity.KEY_LOCAL);
@@ -229,19 +256,18 @@ public class ListaActivity extends AppCompatActivity {
                     viagem.setTipoViagem(tipoViagem);
                     viagem.setContinente(continente);
 
-                    Collections.sort(listaViagens, Viagem.ordenacao);
-
-                    viagemAdapter.notifyDataSetChanged();
+                    ordenarLista();
                 }
             }
             posicaoSelecionada = -1;
 
-            if(actionMode!=null){
+            if (actionMode != null) {
                 actionMode.finish();
             }
         }
     });
-    private void editarViagem(){
+
+    private void editarViagem() {
         Viagem viagem = listaViagens.get(posicaoSelecionada);
 
         Intent intentAbertura = new Intent(this, ViagemActivity.class);
@@ -255,5 +281,46 @@ public class ListaActivity extends AppCompatActivity {
         intentAbertura.putExtra(ViagemActivity.KEY_CONTINENTE, viagem.getContinente());
 
         laucherEditarViagem.launch(intentAbertura);
+    }
+
+    private void ordenarLista() {
+        if(ordenacaoAscendente){
+            Collections.sort(listaViagens, Viagem.ordenacao);
+        } else {
+            Collections.sort(listaViagens, Viagem.ordenacaoDecrescente);
+        }
+        viagemAdapter.notifyDataSetChanged();
+    }
+
+    private void atualizarIconeOrdenacao(){
+        if(ordenacaoAscendente){
+            menuItemOrdenacao.setIcon(R.drawable.ic_action_ascending_order);
+        } else{
+            menuItemOrdenacao.setIcon(R.drawable.ic_action_descending_order);
+        }
+    }
+
+    private void lerPreferencias(){
+        SharedPreferences shared = getSharedPreferences(ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
+        ordenacaoAscendente = shared.getBoolean(KEY_ORDENACAO_ASCENDENTE, ordenacaoAscendente);
+    }
+
+    private void salvarPreferenciaOrdenacao(boolean novoValor){
+        SharedPreferences shared = getSharedPreferences(ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = shared.edit();
+
+        editor.putBoolean(KEY_ORDENACAO_ASCENDENTE, novoValor);
+        editor.commit();
+        ordenacaoAscendente = novoValor;
+    }
+
+    private void restaurarPadroes(){
+        SharedPreferences shared = getSharedPreferences(ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = shared.edit();
+
+        editor.clear();
+        editor.commit();
+
+        ordenacaoAscendente = PADRAO_INICIAL_ORDENACAO_ASCENDENTE;
     }
 }

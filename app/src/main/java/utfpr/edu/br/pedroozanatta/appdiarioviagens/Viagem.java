@@ -12,6 +12,13 @@ public class Viagem {
         }
     };
 
+    public static Comparator<Viagem> ordenacaoDecrescente = new Comparator<Viagem>() {
+        @Override
+        public int compare(Viagem viagem1, Viagem viagem2) {
+            return -1 * viagem1.getPais().compareToIgnoreCase(viagem2.getPais());
+        }
+    };
+
     private String pais;
     private String local;
     private String data;

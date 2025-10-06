@@ -10,6 +10,14 @@
         android:title="@string/btn_cadastrar"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/menuItemOrdenacao"
+        android:icon="@drawable/ic_action_ascending_order"
+        android:title="@string/ordenacao"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menuItemRestaurar"
+        android:title="@string/restaurar_padroes" />
+    <item
         android:id="@+id/menuItemSobre"
         android:title="@string/button_sobre" />
 </menu>

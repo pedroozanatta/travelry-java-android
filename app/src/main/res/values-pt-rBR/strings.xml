@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pais_label">País: </string>
+    <string name="label_data">Data: </string>
+    <string name="btnLimpar">Limpar</string>
+    <string name="btnSalvar">Salvar</string>
+    <string name="pais_hint">Digite o nome do País</string>
+    <string name="local_hint">Digite o nome do local que visitou</string>
+    <string name="label_local">Local: </string>
+    <string name="toast_limpar">Os dados inseridos foram apagados</string>
+    <string name="not_null_pais">Faltou escrever o país</string>
+    <string name="not_null_local">Faltou escrever o local</string>
+    <string name="toast_save_pais">"País: "</string>
+    <string name="toast_save_local">"Local: "</string>
+    <string name="toast_save_data">"Data: "</string>
+    <string name="data_hint">DD/MM/AAAA</string>
+    <string name="not_null_data">Faltou selecionar a data</string>
+    <string name="checkbox_capital">Foi na Capital: </string>
+    <string name="checkbox_true">Foi na Capital</string>
+    <string name="checkbox_false">Fora da Capital</string>
+    <string name="radiobutton_nacional">Nacional</string>
+    <string name="radiobutton_internacional">Internacional</string>
+    <string name="default_radiobutton">Faltou escolher o tipo da viagem</string>
+    <string name="toast_save_radiobutton">"Tipo da Viagem: "</string>
+    <string name="label_radioGroup">"Viagem: "</string>
+    <string name="label_continente">"Continente: "</string>
+    <string name="america_do_sul">América do Sul</string>
+    <string name="america_do_norte">América do Norte</string>
+    <string name="europa">Europa</string>
+    <string name="africa">África</string>
+    <string name="asia">Ásia</string>
+    <string name="oceania">Oceania</string>
+    <string name="not_null_continente">Faltou selecionar o Continente</string>
+    <string name="toast_save_continente">"Continente: "</string>
+    <string name="logo_utfpr">Logo da UTFPR</string>
+    <string name="descricao_sobre">Exemplo do Curso de Desenvolvimento Android</string>
+    <string name="autoria_sobre">Aluno: <a href="https://github.com/pedroozanatta"> Pedro Henrique Zanatta de Oliveira</a></string>
+    <string name="button_sobre">Sobre</string>
+    <string name="lista_de_viagens">Lista de Viagens</string>
+    <string name="sobre_o_aplicativo">Sobre o aplicativo</string>
+    <string name="btn_cadastrar">Adicionar</string>
+    <string name="cadastro_de_viagens">Cadastro de Viagens</string>
+    <string name="nenhum_aplicativo_para_abrir_paginas_web">Nenhum aplicativo para abrir páginas web</string>
+    <string name="nenhum_aplicativo_para_enviar_email">Nenhum aplicativo para enviar email</string>
+    <string name="contato_pelo_aplicativo">Contato pelo aplicativo</string>
+    <string name="editar">Editar</string>
+    <string name="excluir">Excluir</string>
+    <string name="editar_viagem">Editar viagem</string>
+    <string name="sugerir_tipo">Sugerir Tipo</string>
+    <string name="ordenacao">Ordenacao</string>
+    <string name="restaurar_padroes">Restaurar Padrões</string>
+    <string name="as_configuracoes_voltaram_para_o_padrao_de_instalacao">As configurações voltaram para o padrão de instalação</string>
+    <string name="nome_utfpr">UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ</string>
+</resources>
