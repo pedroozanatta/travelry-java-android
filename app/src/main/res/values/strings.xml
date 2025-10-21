@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Internationalization</string>
+    <string name="app_name" translatable="false">Travelry</string>
     <string name="email_sobre" translatable="false">Email:<u>pedroo.2023@alunos.utfpr.edu.br</u></string>
     <string name="utfpr_url" translatable="false">www.utfpr.edu.br</string>
     <string name="pais_label">Country:</string>
@@ -53,4 +53,14 @@
     <string name="contato_pelo_aplicativo">Contact by the app</string>
     <string name="as_configuracoes_voltaram_para_o_padrao_de_instalacao">The configs has been changed to default</string>
     <string name="nome_utfpr">FEDERAL UNIVERSITY OF TECHNOLOGY OF PARANA</string>
+    <string name="aviso">Warning</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="confirmacao">Confirmation</string>
+    <string name="nao_alert">No</string>
+    <string name="sim_alert">Yes</string>
+    <string name="deletar_confirmacao">Do you want to delete?\n\"%1$s\"</string>
+    <string name="deseja_voltar_padroes">Do you want to restore default settings?</string>
+    <string name="desfazer">Undo</string>
+    <string name="alteracao_realizada">Data uptade done</string>
+    <string name="erro_conversao_clone">Type conversion error</string>
 </resources>

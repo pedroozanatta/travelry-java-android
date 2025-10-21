@@ -8,4 +8,6 @@
         <item name="android:textColorLink">@color/links</item>
         <item name="android:textColorPrimary">@color/neutral_white</item>
     </style>
+
+    <color name="corSelecionada">@color/cinza_transparente</color>
 </resources>

@@ -1,6 +1,7 @@
 package utfpr.edu.br.pedroozanatta.appdiarioviagens;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -21,10 +22,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.utillities.Alert;
 
 public class ListaActivity extends AppCompatActivity {
 
@@ -65,7 +71,6 @@ public class ListaActivity extends AppCompatActivity {
             } else {
                 if (idMenuItem == R.id.menuItemExcluir) {
                     excluirViagem();
-                    mode.finish();
                     return true;
                 } else {
                     return false;
@@ -127,7 +132,7 @@ public class ListaActivity extends AppCompatActivity {
 
                 viewSelecionada = view;
                 backgroundDrawable = view.getBackground();
-                view.setBackgroundColor(Color.LTGRAY);
+                view.setBackgroundColor(getColor(R.color.corSelecionada));
 
                 listViewViagens.setEnabled(false);
 
@@ -203,13 +208,7 @@ public class ListaActivity extends AppCompatActivity {
             ordenarLista();
             return true;
         } else if(idMenuItem == R.id.menuItemRestaurar){
-            restaurarPadroes();
-            atualizarIconeOrdenacao();
-            ordenarLista();
-
-            Toast.makeText(this,
-                          getString(R.string.as_configuracoes_voltaram_para_o_padrao_de_instalacao),
-                          Toast.LENGTH_LONG).show();
+            confirmarRestaurarPadroes();
             return true;
 
         } else {
@@ -224,8 +223,19 @@ public class ListaActivity extends AppCompatActivity {
     }
 
     private void excluirViagem() {
-        listaViagens.remove(posicaoSelecionada);
-        viagemAdapter.notifyDataSetChanged();
+
+        Viagem viagem = listaViagens.get(posicaoSelecionada);
+        String mensagem = getString(R.string.deletar_confirmacao, viagem.getPais());
+
+        DialogInterface.OnClickListener listenerSim = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listaViagens.remove(posicaoSelecionada);
+                viagemAdapter.notifyDataSetChanged();
+                actionMode.finish();
+            }
+        };
+        Alert.confirmarAcao(this, mensagem, listenerSim, null);
     }
 
     ActivityResultLauncher<Intent> laucherEditarViagem = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -246,8 +256,18 @@ public class ListaActivity extends AppCompatActivity {
                     String tipo = bundle.getString(ViagemActivity.KEY_TIPO);
                     int continente = bundle.getInt(ViagemActivity.KEY_CONTINENTE);
 
-                    Viagem viagem = listaViagens.get(posicaoSelecionada);
+                    final Viagem viagem = listaViagens.get(posicaoSelecionada);
+                    final Viagem cloneViagem;
+
                     TipoViagem tipoViagem = TipoViagem.valueOf(tipo);
+
+                    try {
+                        cloneViagem = (Viagem) viagem.clone();
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                        Alert.mostrarAviso(ListaActivity.this, R.string.erro_conversao_clone);
+                        return;
+                    }
 
                     viagem.setPais(pais);
                     viagem.setLocal(local);
@@ -257,6 +277,19 @@ public class ListaActivity extends AppCompatActivity {
                     viagem.setContinente(continente);
 
                     ordenarLista();
+
+                    final ConstraintLayout constraintLayout = findViewById(R.id.main);
+                    Snackbar snackbar = Snackbar.make(constraintLayout, R.string.alteracao_realizada, Snackbar.LENGTH_LONG);
+
+                    snackbar.setAction(R.string.desfazer, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            listaViagens.remove(viagem);
+                            listaViagens.add(cloneViagem);
+                            ordenarLista();
+                        }
+                    });
+                    snackbar.show();
                 }
             }
             posicaoSelecionada = -1;
@@ -312,6 +345,23 @@ public class ListaActivity extends AppCompatActivity {
         editor.putBoolean(KEY_ORDENACAO_ASCENDENTE, novoValor);
         editor.commit();
         ordenacaoAscendente = novoValor;
+    }
+
+    private void confirmarRestaurarPadroes(){
+        DialogInterface.OnClickListener listenerSim = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                restaurarPadroes();
+                atualizarIconeOrdenacao();
+                ordenarLista();
+
+                Toast.makeText(ListaActivity.this,
+                        getString(R.string.as_configuracoes_voltaram_para_o_padrao_de_instalacao),
+                        Toast.LENGTH_LONG).show();
+            }
+        };
+
+        Alert.confirmarAcao(this, R.string.deseja_voltar_padroes, listenerSim, null);
     }
 
     private void restaurarPadroes(){

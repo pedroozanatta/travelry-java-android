@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -22,9 +23,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.utillities.Alert;
 
 public class ViagemActivity extends AppCompatActivity {
 
@@ -110,18 +115,49 @@ public class ViagemActivity extends AppCompatActivity {
     }
 
     public void limparInputs() {
+
+        final String pais = editTextPais.getText().toString();
+        final String local = editTextLocal.getText().toString();
+        final String data = editTextData.getText().toString();
+        final boolean capital = checkBoxCapital.isChecked();
+        final int tipoViagem = radioGroupTipo.getCheckedRadioButtonId();
+        final int continente = spinnerContinente.getSelectedItemPosition();
+
+        final ScrollView scrollView = findViewById(R.id.main);
+        final View viewFocus = scrollView.findFocus();
+
         editTextPais.setText(null);
         editTextLocal.setText(null);
         editTextData.setText(null);
         checkBoxCapital.setChecked(false);
         radioGroupTipo.clearCheck();
         spinnerContinente.setSelection(0);
-
         editTextPais.requestFocus();
 
-        Toast.makeText(this,
-                       R.string.toast_limpar,
-                       Toast.LENGTH_LONG).show();
+        Snackbar snackbar = Snackbar.make(scrollView, R.string.toast_limpar, Snackbar.LENGTH_LONG);
+
+        snackbar.setAction(R.string.desfazer, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextPais.setText(pais);
+                editTextLocal.setText(local);
+                editTextData.setText(data);
+                checkBoxCapital.setChecked(capital);
+
+                if(tipoViagem == R.id.radioButtonNacional){
+                    radioButtonNacional.setChecked(true);
+                } else if(tipoViagem == R.id.radioButtonInternacional){
+                    radioButtonInternacional.setChecked(true);
+                }
+
+                spinnerContinente.setSelection(continente);
+
+                if(viewFocus != null){
+                    viewFocus.requestFocus();
+                }
+            }
+        });
+        snackbar.show();
     }
 
     public void salvarDados() {
@@ -131,28 +167,19 @@ public class ViagemActivity extends AppCompatActivity {
         String data = editTextData.getText().toString();
 
         if (pais == null || pais.trim().isEmpty()) {
-            Toast.makeText(this,
-                           getString(R.string.not_null_pais),
-                           Toast.LENGTH_LONG).show();
-
+            Alert.mostrarAviso(this, R.string.not_null_pais);
             editTextPais.requestFocus();
             return;
         }
 
         if (local == null || local.trim().isEmpty()) {
-            Toast.makeText(this,
-                           getString(R.string.not_null_local),
-                           Toast.LENGTH_LONG).show();
-
+            Alert.mostrarAviso(this, R.string.not_null_local);
             editTextLocal.requestFocus();
             return;
         }
 
         if (data == null || data.trim().isEmpty()) {
-            Toast.makeText(this,
-                           getString(R.string.not_null_data),
-                           Toast.LENGTH_LONG).show();
-
+            Alert.mostrarAviso(this, R.string.not_null_data);
             editTextData.requestFocus();
             return;
         }
@@ -166,18 +193,14 @@ public class ViagemActivity extends AppCompatActivity {
         else if (radioButtonId == R.id.radioButtonInternacional)
             radioButtonSelecionado = TipoViagem.Internacional;
         else {
-            Toast.makeText(this,
-                            R.string.default_radiobutton,
-                            Toast.LENGTH_LONG).show();
+            Alert.mostrarAviso(this, R.string.default_radiobutton);
             return;
         }
 
         int continente = spinnerContinente.getSelectedItemPosition();
 
         if(continente == AdapterView.INVALID_POSITION){
-            Toast.makeText(this,
-                            R.string.not_null_continente,
-                            Toast.LENGTH_LONG).show();
+            Alert.mostrarAviso(this, R.string.not_null_continente);
             return;
         }
 

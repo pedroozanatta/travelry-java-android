@@ -51,4 +51,13 @@
     <string name="restaurar_padroes">Restaurar Padrões</string>
     <string name="as_configuracoes_voltaram_para_o_padrao_de_instalacao">As configurações voltaram para o padrão de instalação</string>
     <string name="nome_utfpr">UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ</string>
+    <string name="aviso">Aviso</string>
+    <string name="confirmacao">Confirmação</string>
+    <string name="nao_alert">Não</string>
+    <string name="sim_alert">Sim</string>
+    <string name="deletar_confirmacao">Deseja realmente apagar?\n\"%1$s\"</string>
+    <string name="deseja_voltar_padroes">Deseja realmente restaurar padrões</string>
+    <string name="desfazer">Desfazer</string>
+    <string name="alteracao_realizada">Atualização de dados feita</string>
+    <string name="erro_conversao_clone">Erro de conversão de tipos</string>
 </resources>

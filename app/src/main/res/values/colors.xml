@@ -5,6 +5,8 @@
     <color name="blue_primary_color">#184E7A</color>
     <color name="blue_variant">#2572A8</color>
     <color name="links">#4FA6EB</color>
+    <color name="cinza_transparente">#808080</color>
+    <color name="azul_transparente">#C2D7F6</color>
 
     <color name="ic_launcher_apptravel_background">#81D0D8</color>
 </resources>

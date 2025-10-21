@@ -1,8 +1,10 @@
 package utfpr.edu.br.pedroozanatta.appdiarioviagens;
 
+import androidx.annotation.NonNull;
+
 import java.util.Comparator;
 
-public class Viagem {
+public class Viagem implements Cloneable{
 
 
     public static Comparator<Viagem> ordenacao = new Comparator<Viagem>() {
@@ -81,6 +83,12 @@ public class Viagem {
 
     public void setContinente(int continente) {
         this.continente = continente;
+    }
+
+    @NonNull
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     @Override
