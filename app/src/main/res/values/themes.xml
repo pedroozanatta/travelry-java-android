@@ -8,6 +8,17 @@
 
         <item name="android:textColorLink">@color/blue_primary_color</item>
     </style>
+    
+    <style name="SpinnerDatePickerDialog" parent = "ThemeOverlay.Material3.Light">
+        <item name="android:datePickerStyle">@style/SpinnerDatePickerStyle</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="SpinnerDatePickerStyle" parent = "android:Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+    </style>
+
+
 
     <color name="corSelecionada">@color/azul_transparente</color>
 </resources>

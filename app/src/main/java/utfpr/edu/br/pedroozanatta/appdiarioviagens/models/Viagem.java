@@ -1,11 +1,16 @@
-package utfpr.edu.br.pedroozanatta.appdiarioviagens;
+package utfpr.edu.br.pedroozanatta.appdiarioviagens.models;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.Objects;
 
+@Entity
 public class Viagem implements Cloneable{
-
 
     public static Comparator<Viagem> ordenacao = new Comparator<Viagem>() {
         @Override
@@ -21,20 +26,34 @@ public class Viagem implements Cloneable{
         }
     };
 
+    @PrimaryKey(autoGenerate = true)
+    private long id;
+    @NonNull
+    @ColumnInfo(index = true)
     private String pais;
+    @NonNull
     private String local;
-    private String data;
+    @NonNull
+    private LocalDate data;
     private boolean capital;
     private TipoViagem tipoViagem;
     private int continente;
 
-    public Viagem(String pais, String local, String data, boolean capital, TipoViagem tipoViagem, int continente) {
+    public Viagem(String pais, String local, LocalDate data, boolean capital, TipoViagem tipoViagem, int continente) {
         this.pais = pais;
         this.local = local;
         this.data = data;
         this.capital = capital;
         this.tipoViagem = tipoViagem;
         this.continente = continente;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getPais() {
@@ -53,11 +72,11 @@ public class Viagem implements Cloneable{
         this.local = local;
     }
 
-    public String getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
@@ -87,8 +106,37 @@ public class Viagem implements Cloneable{
 
     @NonNull
     @Override
-    protected Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o)
+            return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Viagem viagem = (Viagem) o;
+
+        if(data == null && viagem.data != null){
+            return false;
+        }
+        if(data != null && data.equals(viagem.data) == false){
+            return false;
+        }
+
+        return capital == viagem.capital &&
+                          continente == viagem.continente &&
+                          pais.equals(viagem.pais) &&
+                          local.equals(viagem.local) &&
+                          tipoViagem == viagem.tipoViagem;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pais, local, data, capital, tipoViagem, continente);
     }
 
     @Override

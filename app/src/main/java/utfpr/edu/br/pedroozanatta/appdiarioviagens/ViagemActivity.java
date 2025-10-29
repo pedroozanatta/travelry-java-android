@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,31 +16,30 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.DAO.ViagemDatabase;
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.TipoViagem;
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.Viagem;
 import utfpr.edu.br.pedroozanatta.appdiarioviagens.utillities.Alert;
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.utillities.DateUtils;
 
 public class ViagemActivity extends AppCompatActivity {
 
-    public static final String KEY_PAIS = "KEY_PAIS";
-    public static final String KEY_LOCAL = "KEY_LOCAL";
-    public static final String KEY_DATA = "KEY_DATA";
-    public static final String KEY_CAPITAL = "KEY_CAPITAL";
-    public static final String KEY_TIPO = "KEY_TIPO";
-    public static final String KEY_CONTINENTE = "KEY_CONTINENTE";
+    public static final String KEY_ID = "ID";
     public static final String KEY_MODO = "MODO";
     public static  final String KEY_SUGERIR_TIPO = "SUGERIR_TIPO";
-    public static  final String KEY_UTIMO_TIPO = "ULTIMO_TIPO";
+    public static  final String KEY_ULTIMO_TIPO = "ULTIMO_TIPO";
 
     public static final int MODO_NOVO = 0;
     public static final int MODO_EDITAR = 1;
@@ -54,6 +52,9 @@ public class ViagemActivity extends AppCompatActivity {
     private Viagem viagemOriginal;
     private boolean sugerirTipo = false;
     private int ultimoTipo = 0;
+
+    private LocalDate data;
+    private int anosPassado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,17 @@ public class ViagemActivity extends AppCompatActivity {
         radioButtonNacional = findViewById(R.id.radioButtonNacional);
         radioButtonInternacional = findViewById(R.id.radioButtonInternacional);
 
+        editTextData.setFocusable(false);
+        editTextData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirCalendario();
+            }
+        });
         lerPreferencias();
+
+        anosPassado = getResources().getInteger(R.integer.anos_passados);
+        data = LocalDate.now().minusYears(anosPassado);
 
         Intent intentAbretura = getIntent();
 
@@ -88,28 +99,32 @@ public class ViagemActivity extends AppCompatActivity {
             } else {
                 setTitle(getString(R.string.editar_viagem));
 
-                String pais = bundle.getString(ViagemActivity.KEY_PAIS);
-                String local = bundle.getString(ViagemActivity.KEY_LOCAL);
-                String data = bundle.getString(ViagemActivity.KEY_DATA);
-                boolean capital = bundle.getBoolean(ViagemActivity.KEY_CAPITAL);
-                String tipo = bundle.getString(ViagemActivity.KEY_TIPO);
-                int continente = bundle.getInt(ViagemActivity.KEY_CONTINENTE);
+                long id = bundle.getLong(KEY_ID);
+                ViagemDatabase database = ViagemDatabase.getInstance(this);
 
-                TipoViagem tipoViagem = TipoViagem.valueOf(tipo);
+                viagemOriginal = database.getViagemDAO().queryForId(id);
 
-                viagemOriginal = new Viagem(pais, local, data, capital, tipoViagem, continente);
+                editTextPais.setText(viagemOriginal.getPais());
+                editTextLocal.setText(viagemOriginal.getLocal());
 
-                editTextPais.setText(pais);
-                editTextLocal.setText(local);
-                editTextData.setText(data);
-                checkBoxCapital.setChecked(capital);
-                spinnerContinente.setSelection(continente);
+                if(viagemOriginal.getData() == null){
+                    data = viagemOriginal.getData();
+                }
+                editTextData.setText(DateUtils.formatLocalDate(data));
+
+                checkBoxCapital.setChecked(viagemOriginal.isCapital());
+                spinnerContinente.setSelection(viagemOriginal.getContinente());
+
+                TipoViagem tipoViagem = viagemOriginal.getTipoViagem();
 
                 if(tipoViagem == TipoViagem.Nacional){
                     radioButtonNacional.setChecked(true);
                 } else if(tipoViagem == TipoViagem.Internacional){
                     radioButtonInternacional.setChecked(true);
                 }
+
+                editTextPais.requestFocus();
+                editTextPais.setSelection(editTextPais.getText().length());
             }
         }
     }
@@ -118,7 +133,7 @@ public class ViagemActivity extends AppCompatActivity {
 
         final String pais = editTextPais.getText().toString();
         final String local = editTextLocal.getText().toString();
-        final String data = editTextData.getText().toString();
+        final LocalDate dataAnterior = data;
         final boolean capital = checkBoxCapital.isChecked();
         final int tipoViagem = radioGroupTipo.getCheckedRadioButtonId();
         final int continente = spinnerContinente.getSelectedItemPosition();
@@ -128,7 +143,10 @@ public class ViagemActivity extends AppCompatActivity {
 
         editTextPais.setText(null);
         editTextLocal.setText(null);
+
         editTextData.setText(null);
+        data = LocalDate.now().minusYears(anosPassado);
+
         checkBoxCapital.setChecked(false);
         radioGroupTipo.clearCheck();
         spinnerContinente.setSelection(0);
@@ -141,7 +159,10 @@ public class ViagemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 editTextPais.setText(pais);
                 editTextLocal.setText(local);
-                editTextData.setText(data);
+
+                data = dataAnterior;
+                editTextData.setText(DateUtils.formatLocalDate(data));
+
                 checkBoxCapital.setChecked(capital);
 
                 if(tipoViagem == R.id.radioButtonNacional){
@@ -164,7 +185,7 @@ public class ViagemActivity extends AppCompatActivity {
 
         String pais = editTextPais.getText().toString();
         String local = editTextLocal.getText().toString();
-        String data = editTextData.getText().toString();
+        String dataSave = editTextData.getText().toString();
 
         if (pais == null || pais.trim().isEmpty()) {
             Alert.mostrarAviso(this, R.string.not_null_pais);
@@ -178,9 +199,8 @@ public class ViagemActivity extends AppCompatActivity {
             return;
         }
 
-        if (data == null || data.trim().isEmpty()) {
+        if (dataSave == null || dataSave.trim().isEmpty()) {
             Alert.mostrarAviso(this, R.string.not_null_data);
-            editTextData.requestFocus();
             return;
         }
 
@@ -207,55 +227,62 @@ public class ViagemActivity extends AppCompatActivity {
 
         boolean capital = checkBoxCapital.isChecked();
 
-        if(modo == MODO_EDITAR &&
-           pais.equalsIgnoreCase(viagemOriginal.getPais()) &&
-           local == viagemOriginal.getLocal() &&
-           data == viagemOriginal.getData() &&
-           capital == viagemOriginal.isCapital() &&
-           radioButtonSelecionado == viagemOriginal.getTipoViagem() &&
-           continente == viagemOriginal.getContinente()){
+        Viagem viagem = new Viagem(pais, local, data, capital, radioButtonSelecionado, continente);
 
+        if(viagem.equals(viagemOriginal)){
             setResult(ViagemActivity.RESULT_CANCELED);
             finish();
             return;
         }
 
-        salvarUltimoTipo(continente);
-
         Intent intentResposta = new Intent();
 
-        intentResposta.putExtra(KEY_PAIS, pais);
-        intentResposta.putExtra(KEY_LOCAL, local);
-        intentResposta.putExtra(KEY_DATA, data);
-        intentResposta.putExtra(KEY_CAPITAL, capital);
-        intentResposta.putExtra(KEY_TIPO, radioButtonSelecionado.toString());
-        intentResposta.putExtra(KEY_CONTINENTE, continente);
+        ViagemDatabase database = ViagemDatabase.getInstance(this);
+        if(modo == MODO_NOVO){
+            long novaViagem = database.getViagemDAO().insert(viagem);
 
+            if(novaViagem <= 0){
+                Alert.mostrarAviso(this, R.string.erro_insercao);
+                return;
+            }
+
+            viagem.setId(novaViagem);
+
+        } else{
+            viagem.setId(viagemOriginal.getId());
+            int linhasAlteradas = database.getViagemDAO().update(viagem);
+
+            if(linhasAlteradas != 1){
+                Alert.mostrarAviso(this, R.string.erro_alteracao);
+                return;
+            }
+        }
+
+        salvarUltimoTipo(continente);
+
+        intentResposta.putExtra(KEY_ID, viagem.getId());
         setResult(ViagemActivity.RESULT_OK, intentResposta);
         finish();
     }
 
-    public void abrirCalendario(View view){
-        Calendar calendario = Calendar.getInstance();
-
-        editTextData.setOnClickListener(new View.OnClickListener() {
-
+    public void abrirCalendario(){
+        DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onClick(View view) {
-                new DatePickerDialog(ViagemActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int ano, int mes, int dia) {
-                        calendario.set(Calendar.YEAR, ano);
-                        calendario.set(Calendar.MONTH, mes);
-                        calendario.set(Calendar.DAY_OF_MONTH, dia);
-
-                        String formatacao = "dd-MMM-yyyy";
-                        SimpleDateFormat dateFormat = new SimpleDateFormat(formatacao, Locale.US);
-                        editTextData.setText(dateFormat.format(calendario.getTime()));
-                    }
-                }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH), calendario.get(Calendar.DAY_OF_MONTH)).show();
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                data = LocalDate.of(year, month + 1, dayOfMonth);
+                editTextData.setText(DateUtils.formatLocalDate(data));
             }
-        });
+        };
+
+        if(data == null){
+            data = LocalDate.now().minusYears(anosPassado);
+        }
+
+        DatePickerDialog picker = new DatePickerDialog(this, R.style.SpinnerDatePickerDialog, listener, data.getYear(), data.getMonthValue() - 1, data.getDayOfMonth());
+
+        long dataMax = DateUtils.toMiliSeconds(LocalDate.now());
+        picker.getDatePicker().setMaxDate(dataMax);
+        picker.show();
     }
 
 
@@ -303,7 +330,7 @@ public class ViagemActivity extends AppCompatActivity {
     private void lerPreferencias(){
         SharedPreferences shared = getSharedPreferences(ListaActivity.ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
         sugerirTipo = shared.getBoolean(KEY_SUGERIR_TIPO, sugerirTipo);
-        ultimoTipo = shared.getInt(KEY_UTIMO_TIPO, ultimoTipo);
+        ultimoTipo = shared.getInt(KEY_ULTIMO_TIPO, ultimoTipo);
     }
 
     private void salvarSugerirTipo(boolean novoValor){
@@ -319,7 +346,7 @@ public class ViagemActivity extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences(ListaActivity.ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shared.edit();
 
-        editor.putInt(KEY_UTIMO_TIPO, novoValor);
+        editor.putInt(KEY_ULTIMO_TIPO, novoValor);
         editor.commit();
         ultimoTipo = novoValor;
     }

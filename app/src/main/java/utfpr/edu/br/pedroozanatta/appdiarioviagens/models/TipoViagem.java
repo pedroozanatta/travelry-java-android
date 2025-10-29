@@ -1,4 +1,4 @@
-package utfpr.edu.br.pedroozanatta.appdiarioviagens;
+package utfpr.edu.br.pedroozanatta.appdiarioviagens.models;
 
 public enum TipoViagem {
 

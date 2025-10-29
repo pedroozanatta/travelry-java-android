@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,6 +29,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.DAO.ViagemDAO;
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.DAO.ViagemDatabase;
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.TipoViagem;
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.Viagem;
 import utfpr.edu.br.pedroozanatta.appdiarioviagens.utillities.Alert;
 
 public class ListaActivity extends AppCompatActivity {
@@ -108,7 +111,15 @@ public class ListaActivity extends AppCompatActivity {
     }
 
     public void popularListaViagens() {
-        listaViagens = new ArrayList<>();
+
+        ViagemDatabase database = ViagemDatabase.getInstance(this);
+
+        if(ordenacaoAscendente){
+            listaViagens = database.getViagemDAO().queryAllAscending();
+        } else{
+            listaViagens = database.getViagemDAO().queryAllDownward();
+        }
+
         viagemAdapter = new ViagemAdapter(listaViagens, this);
 
         listViewViagens.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -161,14 +172,9 @@ public class ListaActivity extends AppCompatActivity {
 
                 if (bundle != null) {
 
-                    String pais = bundle.getString(ViagemActivity.KEY_PAIS);
-                    String local = bundle.getString(ViagemActivity.KEY_LOCAL);
-                    String data = bundle.getString(ViagemActivity.KEY_DATA);
-                    boolean capital = bundle.getBoolean(ViagemActivity.KEY_CAPITAL);
-                    String tipo = bundle.getString(ViagemActivity.KEY_TIPO);
-                    int continente = bundle.getInt(ViagemActivity.KEY_CONTINENTE);
-
-                    Viagem viagem = new Viagem(pais, local, data, capital, TipoViagem.valueOf(tipo), continente);
+                    long id = bundle.getLong(ViagemActivity.KEY_ID);
+                    ViagemDatabase database = ViagemDatabase.getInstance(ListaActivity.this);
+                    Viagem viagem = database.getViagemDAO().queryForId(id);
                     listaViagens.add(viagem);
 
                     ordenarLista();
@@ -224,12 +230,22 @@ public class ListaActivity extends AppCompatActivity {
 
     private void excluirViagem() {
 
-        Viagem viagem = listaViagens.get(posicaoSelecionada);
+        final Viagem viagem = listaViagens.get(posicaoSelecionada);
         String mensagem = getString(R.string.deletar_confirmacao, viagem.getPais());
 
         DialogInterface.OnClickListener listenerSim = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                ViagemDatabase database = ViagemDatabase.getInstance(ListaActivity.this);
+
+                int qntAlterada = database.getViagemDAO().delete(viagem);
+
+                if(qntAlterada != 1){
+                    Alert.mostrarAviso(ListaActivity.this, R.string.erro_exclusao);
+                    return;
+                }
+
                 listaViagens.remove(posicaoSelecionada);
                 viagemAdapter.notifyDataSetChanged();
                 actionMode.finish();
@@ -249,33 +265,14 @@ public class ListaActivity extends AppCompatActivity {
 
                 if (bundle != null) {
 
-                    String pais = bundle.getString(ViagemActivity.KEY_PAIS);
-                    String local = bundle.getString(ViagemActivity.KEY_LOCAL);
-                    String data = bundle.getString(ViagemActivity.KEY_DATA);
-                    boolean capital = bundle.getBoolean(ViagemActivity.KEY_CAPITAL);
-                    String tipo = bundle.getString(ViagemActivity.KEY_TIPO);
-                    int continente = bundle.getInt(ViagemActivity.KEY_CONTINENTE);
+                    final Viagem viagemOriginal = listaViagens.get(posicaoSelecionada);
 
-                    final Viagem viagem = listaViagens.get(posicaoSelecionada);
-                    final Viagem cloneViagem;
+                    long id = bundle.getLong(ViagemActivity.KEY_ID);
+                    final ViagemDatabase database = ViagemDatabase.getInstance(ListaActivity.this);
+                    Viagem viagem = database.getViagemDAO().queryForId(id);
 
-                    TipoViagem tipoViagem = TipoViagem.valueOf(tipo);
-
-                    try {
-                        cloneViagem = (Viagem) viagem.clone();
-                    } catch (CloneNotSupportedException e) {
-                        e.printStackTrace();
-                        Alert.mostrarAviso(ListaActivity.this, R.string.erro_conversao_clone);
-                        return;
-                    }
-
-                    viagem.setPais(pais);
-                    viagem.setLocal(local);
-                    viagem.setData(data);
-                    viagem.setCapital(capital);
-                    viagem.setTipoViagem(tipoViagem);
-                    viagem.setContinente(continente);
-
+                    final Viagem viagemEditada = database.getViagemDAO().queryForId(id);
+                    listaViagens.set(posicaoSelecionada, viagemEditada);
                     ordenarLista();
 
                     final ConstraintLayout constraintLayout = findViewById(R.id.main);
@@ -284,8 +281,16 @@ public class ListaActivity extends AppCompatActivity {
                     snackbar.setAction(R.string.desfazer, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            listaViagens.remove(viagem);
-                            listaViagens.add(cloneViagem);
+
+                            int qntAlterada = database.getViagemDAO().update(viagemOriginal);
+
+                            if(qntAlterada != 1){
+                                Alert.mostrarAviso(ListaActivity.this, R.string.erro_alteracao);
+                                return;
+                            }
+
+                            listaViagens.remove(viagemEditada);
+                            listaViagens.add(viagemOriginal);
                             ordenarLista();
                         }
                     });
@@ -306,12 +311,7 @@ public class ListaActivity extends AppCompatActivity {
         Intent intentAbertura = new Intent(this, ViagemActivity.class);
         intentAbertura.putExtra(ViagemActivity.KEY_MODO, ViagemActivity.MODO_EDITAR);
 
-        intentAbertura.putExtra(ViagemActivity.KEY_PAIS, viagem.getPais());
-        intentAbertura.putExtra(ViagemActivity.KEY_LOCAL, viagem.getLocal());
-        intentAbertura.putExtra(ViagemActivity.KEY_DATA, viagem.getData());
-        intentAbertura.putExtra(ViagemActivity.KEY_CAPITAL, viagem.isCapital());
-        intentAbertura.putExtra(ViagemActivity.KEY_TIPO, viagem.getTipoViagem().toString());
-        intentAbertura.putExtra(ViagemActivity.KEY_CONTINENTE, viagem.getContinente());
+        intentAbertura.putExtra(ViagemActivity.KEY_ID, viagem.getId());
 
         laucherEditarViagem.launch(intentAbertura);
     }

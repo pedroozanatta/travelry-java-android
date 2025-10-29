@@ -94,7 +94,7 @@
             android:ems="10"
             android:focusable="false"
             android:hint="@string/data_hint"
-            android:inputType="text"
+            android:inputType="datetime|date"
             android:onClick="abrirCalendario"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

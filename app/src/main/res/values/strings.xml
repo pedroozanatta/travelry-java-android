@@ -62,5 +62,7 @@
     <string name="deseja_voltar_padroes">Do you want to restore default settings?</string>
     <string name="desfazer">Undo</string>
     <string name="alteracao_realizada">Data uptade done</string>
-    <string name="erro_conversao_clone">Type conversion error</string>
+    <string name="erro_insercao">Error trying to insert</string>
+    <string name="erro_alteracao">Error trying to update</string>
+    <string name="erro_exclusao">Error trying to delete</string>
 </resources>

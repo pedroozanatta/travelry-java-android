@@ -1,15 +1,17 @@
 package utfpr.edu.br.pedroozanatta.appdiarioviagens;
 
 import android.content.Context;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.List;
+
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.TipoViagem;
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.Viagem;
+import utfpr.edu.br.pedroozanatta.appdiarioviagens.utillities.DateUtils;
 
 public class ViagemAdapter extends BaseAdapter {
 
@@ -75,7 +77,7 @@ public class ViagemAdapter extends BaseAdapter {
 
         holder.textViewValorPais.setText(viagem.getPais());
         holder.textViewValorLocal.setText(viagem.getLocal());
-        holder.textViewValorData.setText(viagem.getData());
+        holder.textViewValorData.setText(DateUtils.formatLocalDate(viagem.getData()));
 
         if (viagem.isCapital())
             holder.textViewValorCapital.setText(R.string.checkbox_true);
