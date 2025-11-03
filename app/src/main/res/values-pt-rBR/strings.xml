@@ -30,8 +30,8 @@
     <string name="africa">África</string>
     <string name="asia">Ásia</string>
     <string name="oceania">Oceania</string>
-    <string name="not_null_continente">Faltou selecionar o Continente</string>
-    <string name="toast_save_continente">"Continente: "</string>
+    <string name="not_null_continent">Faltou selecionar o Continente</string>
+    <string name="toast_save_continent">"Continente: "</string>
     <string name="logo_utfpr">Logo da UTFPR</string>
     <string name="descricao_sobre">Exemplo do Curso de Desenvolvimento Android</string>
     <string name="autoria_sobre">Aluno: <a href="https://github.com/pedroozanatta"> Pedro Henrique Zanatta de Oliveira</a></string>
@@ -62,4 +62,20 @@
     <string name="erro_insercao">Erro ao tentar inserir</string>
     <string name="erro_alteracao">Erro ao tentar atualizar</string>
     <string name="erro_exclusao">Erro ao tentar excluir</string>
+    <string name="nome_ponto_turistico">Place Visited:</string>
+    <string name="label_endereco">Address</string>
+    <string name="exposicao">Exposição</string>
+    <string name="cadastro_dos_pontos_visitados_na_viagem">"Novo ponto em %1$s "</string>
+    <string name="label_categoria">Categoria:</string>
+    <string name="restaurante">Restaurante</string>
+    <string name="museu">Museu</string>
+    <string name="parque">Parque de Eventos</string>
+    <string name="comercio">Comércio</string>
+    <string name="not_null_category">A categoria não pode ser vazia</string>
+    <string name="erro_insercao_nome">O nome não pode ser vazio</string>
+    <string name="erro_insercao_endereco">O endereço não pode ser vazio</string>
+    <string name="edicao_pontos_turisticos">Edição de pontos de: %1$s</string>
+    <string name="pontos_turisticos">Pontos Turísticos</string>
+    <string name="nome_ponto_hint">Coloque o nome do ponto turístico</string>
+    <string name="endereco_hint">Coloque o endereço</string>
 </resources>

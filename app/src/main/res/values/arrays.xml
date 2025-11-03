@@ -10,6 +10,14 @@
         <item>@string/oceania</item>
     </string-array>
 
+    <string-array name="categorias">
+        <item>@string/restaurante</item>
+        <item>@string/museu</item>
+        <item>@string/parque</item>
+        <item>@string/comercio</item>
+        <item>@string/exposicao</item>
+    </string-array>
+
     <string-array name="viagem_pais">
         <item>Espanha</item>
         <item>Brasil</item>

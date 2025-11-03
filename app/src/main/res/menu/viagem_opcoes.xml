@@ -6,14 +6,19 @@
         android:id="@+id/menuItemSalvar"
         android:icon="@android:drawable/ic_menu_save"
         android:title="@string/btnSalvar"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/menuItemLimpar"
         android:icon="@drawable/ic_action_clear"
         android:title="@string/btnLimpar"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/menuItemSugerirTipo"
         android:checkable="true"
         android:title="@string/sugerir_tipo" />
+    <item
+        android:id="@+id/menuItemPontoTuristico"
+        android:icon="@android:drawable/ic_menu_mapmode"
+        android:title="@string/pontos_turisticos"
+        app:showAsAction="always" />
 </menu>

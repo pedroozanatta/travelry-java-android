@@ -49,4 +49,12 @@ public final class Alert {
     public static void confirmarAcao(Context context, int id, DialogInterface.OnClickListener listenerSim, DialogInterface.OnClickListener listenerNao){
         confirmarAcao(context, context.getString(id), listenerSim, listenerNao);
     }
+
+    public interface OnTextEnteredListener{
+        void onTextEntered(String text);
+    }
+
+    public static void lerTexto(Context context, int idTitulo, int idLayout, int idEditText,String textoInicial, final OnTextEnteredListener listener) {
+
+    }
 }

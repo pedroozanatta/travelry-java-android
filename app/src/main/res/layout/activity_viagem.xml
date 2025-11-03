@@ -64,7 +64,7 @@
             android:layout_marginEnd="16dp"
             android:ems="10"
             android:hint="@string/local_hint"
-            android:inputType="text"
+            android:inputType="text|textCapWords"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewLocal" />
@@ -95,7 +95,6 @@
             android:focusable="false"
             android:hint="@string/data_hint"
             android:inputType="datetime|date"
-            android:onClick="abrirCalendario"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewData" />

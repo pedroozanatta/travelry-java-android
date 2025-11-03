@@ -22,11 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import utfpr.edu.br.pedroozanatta.appdiarioviagens.DAO.ViagemDatabase;
 import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.TipoViagem;
@@ -36,11 +32,11 @@ import utfpr.edu.br.pedroozanatta.appdiarioviagens.utillities.DateUtils;
 
 public class ViagemActivity extends AppCompatActivity {
 
-    public static final String KEY_ID = "ID";
+
+    public static final String KEY_ID_VIAGEM = "ID_VIAGEM";
     public static final String KEY_MODO = "MODO";
     public static  final String KEY_SUGERIR_TIPO = "SUGERIR_TIPO";
     public static  final String KEY_ULTIMO_TIPO = "ULTIMO_TIPO";
-
     public static final int MODO_NOVO = 0;
     public static final int MODO_EDITAR = 1;
     private EditText editTextPais, editTextLocal, editTextData;
@@ -52,7 +48,6 @@ public class ViagemActivity extends AppCompatActivity {
     private Viagem viagemOriginal;
     private boolean sugerirTipo = false;
     private int ultimoTipo = 0;
-
     private LocalDate data;
     private int anosPassado;
 
@@ -99,7 +94,7 @@ public class ViagemActivity extends AppCompatActivity {
             } else {
                 setTitle(getString(R.string.editar_viagem));
 
-                long id = bundle.getLong(KEY_ID);
+                long id = bundle.getLong(KEY_ID_VIAGEM);
                 ViagemDatabase database = ViagemDatabase.getInstance(this);
 
                 viagemOriginal = database.getViagemDAO().queryForId(id);
@@ -107,7 +102,7 @@ public class ViagemActivity extends AppCompatActivity {
                 editTextPais.setText(viagemOriginal.getPais());
                 editTextLocal.setText(viagemOriginal.getLocal());
 
-                if(viagemOriginal.getData() == null){
+                if(viagemOriginal.getData() != null){
                     data = viagemOriginal.getData();
                 }
                 editTextData.setText(DateUtils.formatLocalDate(data));
@@ -220,7 +215,7 @@ public class ViagemActivity extends AppCompatActivity {
         int continente = spinnerContinente.getSelectedItemPosition();
 
         if(continente == AdapterView.INVALID_POSITION){
-            Alert.mostrarAviso(this, R.string.not_null_continente);
+            Alert.mostrarAviso(this, R.string.not_null_continent);
             return;
         }
 
@@ -260,7 +255,7 @@ public class ViagemActivity extends AppCompatActivity {
 
         salvarUltimoTipo(continente);
 
-        intentResposta.putExtra(KEY_ID, viagem.getId());
+        intentResposta.putExtra(KEY_ID_VIAGEM, viagem.getId());
         setResult(ViagemActivity.RESULT_OK, intentResposta);
         finish();
     }
@@ -296,6 +291,13 @@ public class ViagemActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.menuItemSugerirTipo);
         item.setChecked(sugerirTipo);
+
+        MenuItem itemPontoTuristico = menu.findItem(R.id.menuItemPontoTuristico);
+
+        if(itemPontoTuristico != null){
+            itemPontoTuristico.setVisible(modo == MODO_EDITAR);
+        }
+
         return true;
     }
 
@@ -309,14 +311,17 @@ public class ViagemActivity extends AppCompatActivity {
         } else if(idMenuItem == R.id.menuItemLimpar) {
             limparInputs();
             return true;
-        }else if(idMenuItem == R.id.menuItemSugerirTipo){
+        }else if(idMenuItem == R.id.menuItemPontoTuristico){
+            abrirNovoPontoTuristico();
+            return true;
+        } else if(idMenuItem == R.id.menuItemSugerirTipo){
 
             boolean valor = !item.isChecked();
 
             salvarSugerirTipo(valor);
             item.setChecked(valor);
 
-            if(sugerirTipo){
+            if(valor){
                 spinnerContinente.setSelection(ultimoTipo);
             }
 
@@ -328,13 +333,13 @@ public class ViagemActivity extends AppCompatActivity {
     }
 
     private void lerPreferencias(){
-        SharedPreferences shared = getSharedPreferences(ListaActivity.ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences shared = getSharedPreferences(ListaViagemActivity.ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
         sugerirTipo = shared.getBoolean(KEY_SUGERIR_TIPO, sugerirTipo);
         ultimoTipo = shared.getInt(KEY_ULTIMO_TIPO, ultimoTipo);
     }
 
     private void salvarSugerirTipo(boolean novoValor){
-        SharedPreferences shared = getSharedPreferences(ListaActivity.ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences shared = getSharedPreferences(ListaViagemActivity.ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shared.edit();
 
         editor.putBoolean(KEY_SUGERIR_TIPO, novoValor);
@@ -343,11 +348,22 @@ public class ViagemActivity extends AppCompatActivity {
     }
 
     private  void salvarUltimoTipo(int novoValor){
-        SharedPreferences shared = getSharedPreferences(ListaActivity.ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences shared = getSharedPreferences(ListaViagemActivity.ARQUIVO_PREFERENCIAS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shared.edit();
 
         editor.putInt(KEY_ULTIMO_TIPO, novoValor);
         editor.commit();
         ultimoTipo = novoValor;
+    }
+
+    private void abrirNovoPontoTuristico() {
+        if (viagemOriginal == null) {
+            Alert.mostrarAviso(this, R.string.erro_insercao);
+            return;
+        }
+
+        Intent intentAbertura = new Intent(this, ListaPontosTuristicosActivity.class);
+        intentAbertura.putExtra(ListaPontosTuristicosActivity.KEY_ID_VIAGEM, viagemOriginal.getId());
+        startActivity(intentAbertura);
     }
 }

@@ -5,10 +5,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListaViagemActivity">
+    tools:context=".ListaPontosTuristicosActivity">
 
     <ListView
-        android:id="@+id/listViewViagens"
+        android:id="@+id/listViewPontosTuristicos"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -19,6 +19,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/lista_viagens" />
-
+        tools:listitem="@layout/lista_pontos_turisticos" />
 </androidx.constraintlayout.widget.ConstraintLayout>

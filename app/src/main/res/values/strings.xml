@@ -32,8 +32,8 @@
     <string name="africa">Africa</string>
     <string name="asia">Asia</string>
     <string name="oceania">Oceania</string>
-    <string name="not_null_continente">You need to select the continent</string>
-    <string name="toast_save_continente">Continent:</string>
+    <string name="not_null_continent">You need to select the continent</string>
+    <string name="toast_save_continent">Continent:</string>
     <string name="logo_utfpr">UTFPR\'s Logo</string>
     <string name="descricao_sobre">This is a project of mobile development</string>
     <string name="autoria_sobre">Student: <a href="https://github.com/pedroozanatta"> Pedro Henrique Zanatta de Oliveira</a></string>
@@ -44,9 +44,9 @@
     <string name="cadastro_de_viagens">Travel Register</string>
     <string name="nenhum_aplicativo_para_abrir_paginas_web">Theres no app to open web pages</string>
     <string name="nenhum_aplicativo_para_enviar_email">Theres no app to send email</string>
-    <string name="editar">Uptade</string>
+    <string name="editar">Update</string>
     <string name="excluir">Delete</string>
-    <string name="editar_viagem">Uptade Travels</string>
+    <string name="editar_viagem">Update Travels</string>
     <string name="sugerir_tipo">Sugest Type</string>
     <string name="ordenacao">Ordering</string>
     <string name="restaurar_padroes">Restauring Configs</string>
@@ -61,8 +61,24 @@
     <string name="deletar_confirmacao">Do you want to delete?\n\"%1$s\"</string>
     <string name="deseja_voltar_padroes">Do you want to restore default settings?</string>
     <string name="desfazer">Undo</string>
-    <string name="alteracao_realizada">Data uptade done</string>
+    <string name="alteracao_realizada">Data update done</string>
     <string name="erro_insercao">Error trying to insert</string>
     <string name="erro_alteracao">Error trying to update</string>
     <string name="erro_exclusao">Error trying to delete</string>
+    <string name="nome_ponto_turistico">Place Visited:</string>
+    <string name="label_endereco">Address</string>
+    <string name="label_categoria">Category:</string>
+    <string name="restaurante">Restaurant</string>
+    <string name="museu">Museum</string>
+    <string name="parque">Amusement Park</string>
+    <string name="comercio">Market</string>
+    <string name="exposicao">Exposure</string>
+    <string name="cadastro_dos_pontos_visitados_na_viagem">"New place at %1$s"</string>
+    <string name="not_null_category">You need to select the category</string>
+    <string name="erro_insercao_nome">You need to insert the name</string>
+    <string name="erro_insercao_endereco">You need to insert the address</string>
+    <string name="edicao_pontos_turisticos">Editing places from %1$s</string>
+    <string name="pontos_turisticos">Touristic Points</string>
+    <string name="nome_ponto_hint">Enter with the name of the sigth</string>
+    <string name="endereco_hint">"Enter with the address "</string>
 </resources>

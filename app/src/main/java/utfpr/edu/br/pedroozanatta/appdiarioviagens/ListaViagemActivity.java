@@ -25,29 +25,24 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import utfpr.edu.br.pedroozanatta.appdiarioviagens.DAO.ViagemDAO;
 import utfpr.edu.br.pedroozanatta.appdiarioviagens.DAO.ViagemDatabase;
-import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.TipoViagem;
 import utfpr.edu.br.pedroozanatta.appdiarioviagens.models.Viagem;
 import utfpr.edu.br.pedroozanatta.appdiarioviagens.utillities.Alert;
 
-public class ListaActivity extends AppCompatActivity {
+public class ListaViagemActivity extends AppCompatActivity {
 
     private ListView listViewViagens;
     private List<Viagem> listaViagens;
     private ViagemAdapter viagemAdapter;
-
     private int posicaoSelecionada = -1;
     private ActionMode actionMode;
     private View viewSelecionada;
     private Drawable backgroundDrawable;
     public static final String ARQUIVO_PREFERENCIAS = "utfpr.edu.br.pedroozanatta.appdiarioviagens.PREFERENCIAS";
     public static final String KEY_ORDENACAO_ASCENDENTE = "ORDENACAO_ASCENDENTE";
-
     public static final boolean PADRAO_INICIAL_ORDENACAO_ASCENDENTE = true;
     private boolean ordenacaoAscendente = PADRAO_INICIAL_ORDENACAO_ASCENDENTE;
     private MenuItem menuItemOrdenacao;
@@ -55,7 +50,7 @@ public class ListaActivity extends AppCompatActivity {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflate = mode.getMenuInflater();
-            inflate.inflate(R.menu.viagens_item_selecionado, menu);
+            inflate.inflate(R.menu.item_selecionado, menu);
             return true;
         }
 
@@ -164,7 +159,7 @@ public class ListaActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> laucherNovaViagem = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == ListaActivity.RESULT_OK) {
+            if (result.getResultCode() == ListaViagemActivity.RESULT_OK) {
 
                 Intent intent = result.getData();
 
@@ -172,8 +167,8 @@ public class ListaActivity extends AppCompatActivity {
 
                 if (bundle != null) {
 
-                    long id = bundle.getLong(ViagemActivity.KEY_ID);
-                    ViagemDatabase database = ViagemDatabase.getInstance(ListaActivity.this);
+                    long id = bundle.getLong(ViagemActivity.KEY_ID_VIAGEM);
+                    ViagemDatabase database = ViagemDatabase.getInstance(ListaViagemActivity.this);
                     Viagem viagem = database.getViagemDAO().queryForId(id);
                     listaViagens.add(viagem);
 
@@ -216,7 +211,6 @@ public class ListaActivity extends AppCompatActivity {
         } else if(idMenuItem == R.id.menuItemRestaurar){
             confirmarRestaurarPadroes();
             return true;
-
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -237,12 +231,12 @@ public class ListaActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                ViagemDatabase database = ViagemDatabase.getInstance(ListaActivity.this);
+                ViagemDatabase database = ViagemDatabase.getInstance(ListaViagemActivity.this);
 
                 int qntAlterada = database.getViagemDAO().delete(viagem);
 
                 if(qntAlterada != 1){
-                    Alert.mostrarAviso(ListaActivity.this, R.string.erro_exclusao);
+                    Alert.mostrarAviso(ListaViagemActivity.this, R.string.erro_exclusao);
                     return;
                 }
 
@@ -257,7 +251,7 @@ public class ListaActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> laucherEditarViagem = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == ListaActivity.RESULT_OK) {
+            if (result.getResultCode() == ListaViagemActivity.RESULT_OK) {
 
                 Intent intent = result.getData();
 
@@ -267,9 +261,8 @@ public class ListaActivity extends AppCompatActivity {
 
                     final Viagem viagemOriginal = listaViagens.get(posicaoSelecionada);
 
-                    long id = bundle.getLong(ViagemActivity.KEY_ID);
-                    final ViagemDatabase database = ViagemDatabase.getInstance(ListaActivity.this);
-                    Viagem viagem = database.getViagemDAO().queryForId(id);
+                    long id = bundle.getLong(ViagemActivity.KEY_ID_VIAGEM);
+                    final ViagemDatabase database = ViagemDatabase.getInstance(ListaViagemActivity.this);
 
                     final Viagem viagemEditada = database.getViagemDAO().queryForId(id);
                     listaViagens.set(posicaoSelecionada, viagemEditada);
@@ -285,7 +278,7 @@ public class ListaActivity extends AppCompatActivity {
                             int qntAlterada = database.getViagemDAO().update(viagemOriginal);
 
                             if(qntAlterada != 1){
-                                Alert.mostrarAviso(ListaActivity.this, R.string.erro_alteracao);
+                                Alert.mostrarAviso(ListaViagemActivity.this, R.string.erro_alteracao);
                                 return;
                             }
 
@@ -311,7 +304,7 @@ public class ListaActivity extends AppCompatActivity {
         Intent intentAbertura = new Intent(this, ViagemActivity.class);
         intentAbertura.putExtra(ViagemActivity.KEY_MODO, ViagemActivity.MODO_EDITAR);
 
-        intentAbertura.putExtra(ViagemActivity.KEY_ID, viagem.getId());
+        intentAbertura.putExtra(ViagemActivity.KEY_ID_VIAGEM, viagem.getId());
 
         laucherEditarViagem.launch(intentAbertura);
     }
@@ -355,7 +348,7 @@ public class ListaActivity extends AppCompatActivity {
                 atualizarIconeOrdenacao();
                 ordenarLista();
 
-                Toast.makeText(ListaActivity.this,
+                Toast.makeText(ListaViagemActivity.this,
                         getString(R.string.as_configuracoes_voltaram_para_o_padrao_de_instalacao),
                         Toast.LENGTH_LONG).show();
             }

@@ -12,12 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ThemeStylesIcons">
         <activity
+            android:name=".PontoTuristicoActivity"
+            android:exported="false"
+            android:parentActivityName=".ListaPontosTuristicosActivity" />
+        <activity
+            android:name=".ListaPontosTuristicosActivity"
+            android:exported="false"
+            android:parentActivityName=".ViagemActivity" />
+        <activity
             android:name=".SobreActivity"
             android:exported="false"
-            android:parentActivityName=".ListaActivity"
-            />
+            android:parentActivityName=".ListaViagemActivity" />
         <activity
-            android:name=".ListaActivity"
+            android:name=".ListaViagemActivity"
             android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
@@ -29,8 +36,7 @@
         <activity
             android:name=".ViagemActivity"
             android:exported="false"
-            android:parentActivityName=".ListaActivity">
-        </activity>
+            android:parentActivityName=".ListaViagemActivity"></activity>
     </application>
 
 </manifest>
